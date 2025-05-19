@@ -119,9 +119,11 @@ const renderRecipe = function (recipe) {
 
 const getRecipe = async function () {
   try {
+    let id = window.location.hash.slice(1);
+    if (!id) return;
     renderLoader(recipeContainer);
     let response = await fetch(
-      `https://forkify-api.jonas.io/api/v2/recipes/5ed6604591c37cdc054bc886?key=${process.env.API_KEY}`
+      `https://forkify-api.jonas.io/api/v2/recipes/${id}?key=${process.env.API_KEY}`
     );
     if (!response.ok)
       throw new Error(`${response.statusText}${response.status}`);
@@ -132,4 +134,4 @@ const getRecipe = async function () {
   }
 };
 
-getRecipe();
+["load", "hashchange"].map((ev) => window.addEventListener(ev, getRecipe));
