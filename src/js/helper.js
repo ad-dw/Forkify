@@ -10,13 +10,12 @@ const timeout = function (s) {
   });
 };
 
-export const getJSON = async (id) => {
+export const getJSON = async (url) => {
   try {
     let response = await Promise.race([
-      fetch(`${API_URL}${id}?key=8b0ababc-fcc7-47ee-84ed-dcd1f8d52bea`),
+      fetch(`${url}key=8b0ababc-fcc7-47ee-84ed-dcd1f8d52bea`),
       timeout(TIMEOUT_SEC),
     ]);
-    console.log(response);
     if (!response.ok)
       throw new Error(
         `${response.status} ${
