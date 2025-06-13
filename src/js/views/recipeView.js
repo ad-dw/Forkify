@@ -1,23 +1,18 @@
 import Fraction from "fraction.js";
 import icons from "url:../../img/icons.svg";
+import View from "./view";
 
-class RecipeView {
-  #data;
-  #parentEl = document.querySelector(".recipe");
-  #message = "Start by searching for a recipe or an ingredient. Have fun!";
-  render(recipe) {
-    this.#data = recipe;
-    const recipeMarkup = this.#generateMarkup();
-    this.#parentEl.innerHTML = recipeMarkup;
-  }
+class RecipeView extends View {
+  _parentEl = document.querySelector(".recipe");
+  _message = "Start by searching for a recipe or an ingredient. Have fun!";
 
-  #generateMarkup() {
+  _generateMarkup() {
     return `<figure class="recipe__fig">
           <img src="${
-            this.#data?.image_url
+            this._data?.image_url
           }" alt="Tomato" class="recipe__img" />
           <h1 class="recipe__title">
-            <span>${this.#data?.title}</span>
+            <span>${this._data?.title}</span>
           </h1>
         </figure>
 
@@ -27,7 +22,7 @@ class RecipeView {
               <use href="${icons}#icon-clock"></use>
             </svg>
             <span class="recipe__info-data recipe__info-data--minutes">${
-              this.#data?.cooking_time
+              this._data?.cooking_time
             }</span>
             <span class="recipe__info-text">minutes</span>
           </div>
@@ -36,7 +31,7 @@ class RecipeView {
               <use href="${icons}#icon-users"></use>
             </svg>
             <span class="recipe__info-data recipe__info-data--people">${
-              this.#data?.servings
+              this._data?.servings
             }</span>
             <span class="recipe__info-text">servings</span>
 
@@ -69,7 +64,7 @@ class RecipeView {
         <div class="recipe__ingredients">
           <h2 class="heading--2">Recipe ingredients</h2>
           <ul class="recipe__ingredient-list">
-          ${this.#getIngredients()}
+          ${this._getIngredients()}
           </ul>
         </div>
 
@@ -78,13 +73,13 @@ class RecipeView {
           <p class="recipe__directions-text">
             This recipe was carefully designed and tested by
             <span class="recipe__publisher">${
-              this.#data?.publisher
+              this._data?.publisher
             }</span>. Please check out
             directions at their website.
           </p>
           <a
             class="btn--small recipe__btn"
-            href="${this.#data?.source_url}"
+            href="${this._data?.source_url}"
             target="_blank"
           >
             <span>Directions</span>
@@ -95,8 +90,8 @@ class RecipeView {
         </div>`;
   }
 
-  #getIngredients() {
-    return this.#data?.ingredients
+  _getIngredients() {
+    return this._data?.ingredients
       ?.map((ing) => {
         return `<li class="recipe__ingredient">
                 <svg class="recipe__icon">
@@ -116,15 +111,6 @@ class RecipeView {
       .join("");
   }
 
-  renderSpinner() {
-    const loaderMarkup = `<div class="spinner">
-              <svg>
-                <use href="${icons}#icon-loader"></use>
-              </svg>
-            </div> `;
-    this.#parentEl.innerHTML = loaderMarkup;
-  }
-
   renderInitialMessage() {
     const markup = `<div class="message">
           <div>
@@ -132,7 +118,7 @@ class RecipeView {
               <use href="${icons}#icon-smile"></use>
             </svg>
           </div>
-          <p>${this.#message}</p>
+          <p>${this._message}</p>
         </div>`;
   }
 
