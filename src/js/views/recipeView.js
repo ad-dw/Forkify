@@ -4,6 +4,7 @@ import icons from "url:../../img/icons.svg";
 class RecipeView {
   #data;
   #parentEl = document.querySelector(".recipe");
+  #message = "Start by searching for a recipe or an ingredient. Have fun!";
   render(recipe) {
     this.#data = recipe;
     const recipeMarkup = this.#generateMarkup();
@@ -122,6 +123,21 @@ class RecipeView {
               </svg>
             </div> `;
     this.#parentEl.innerHTML = loaderMarkup;
+  }
+
+  renderInitialMessage() {
+    const markup = `<div class="message">
+          <div>
+            <svg>
+              <use href="${icons}#icon-smile"></use>
+            </svg>
+          </div>
+          <p>${this.#message}</p>
+        </div>`;
+  }
+
+  addHandlerRenderer(handler) {
+    ["load", "hashchange"].map((ev) => window.addEventListener(ev, handler));
   }
 }
 
