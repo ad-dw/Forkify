@@ -6,8 +6,8 @@ export default class View {
     if (!data || (Array.isArray(data) && !data.length))
       return this.renderError();
     this._data = data;
-    const recipeMarkup = this._generateMarkup();
-    this._parentEl.innerHTML = recipeMarkup;
+    const domMarkup = this._generateMarkup();
+    this._parentEl.innerHTML = domMarkup;
   }
 
   renderSpinner() {
