@@ -3,6 +3,7 @@ import "regenerator-runtime/runtime";
 import SearchView from "./views/searchView.js";
 import RecipeView from "./views/recipeView.js";
 import ResultsView from "./views/resultsView.js";
+import PaginationView from "./views/paginationView.js";
 import { showToast } from "./helper.js";
 import * as model from "./model.js";
 
@@ -29,14 +30,21 @@ const getSearchResults = async function () {
     const query = SearchView.getQuery();
     if (!query) return;
     await model.loadSearchResults(query);
-    ResultsView.render(model.state.search.searchResults);
+    ResultsView.render(model.currentPageResults());
+    PaginationView.render(model.state.search);
   } catch (err) {
     showToast(err.message);
   }
 };
 
+const getPagination = function (goToPage) {
+  ResultsView.render(model.currentPageResults(goToPage));
+  PaginationView.render(model.state.search);
+};
+
 const init = () => {
   RecipeView.addHandlerRenderer(getRecipe);
   SearchView.addHandlerSearch(getSearchResults);
+  PaginationView.addHandlerPagination(getPagination);
 };
 init();
