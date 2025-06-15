@@ -16,6 +16,7 @@ const getRecipe = async function () {
     let id = window.location.hash.slice(1);
     if (!id) return;
     RecipeView.renderSpinner();
+    ResultsView.update(model.currentPageResults());
     await model.loadRecipe(id);
     RecipeView.render(model.state.recipe);
   } catch (err) {
@@ -42,8 +43,14 @@ const getPagination = function (goToPage) {
   PaginationView.render(model.state.search);
 };
 
+const updateRecipeServings = function (newServing) {
+  model.updateServingsData(newServing);
+  RecipeView.render(model.state.recipe);
+};
+
 const init = () => {
   RecipeView.addHandlerRenderer(getRecipe);
+  RecipeView.addHandlerUpdateServings(updateRecipeServings);
   SearchView.addHandlerSearch(getSearchResults);
   PaginationView.addHandlerPagination(getPagination);
 };

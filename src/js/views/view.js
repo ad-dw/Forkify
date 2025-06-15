@@ -10,6 +10,33 @@ export default class View {
     this._parentEl.innerHTML = domMarkup;
   }
 
+  render(data) {
+    if (!data || (Array.isArray(data) && !data.length))
+      return this.renderError();
+    this._data = data;
+    const domMarkup = this._generateMarkup();
+    this._parentEl.innerHTML = domMarkup;
+  }
+
+  update(data) {
+    this._data = data;
+    const newDomMarkup = this._generateMarkup();
+    const newDOM = document
+      .createRange()
+      .createContextualFragment(newDomMarkup);
+    const newElements = newDOM.querySelectorAll("*");
+    const prevElements = this._parentEl.querySelectorAll("*");
+    newElements.forEach((newEl, i) => {
+      if (!newEl.isEqualNode(prevElements[i])) {
+        if (newEl.firstChild?.nodeValue.trim() !== "")
+          prevElements[i].textContent = newEl.textContent;
+        Array.from(newEl.attributes).forEach((attribute) =>
+          prevElements[i].setAttribute(attribute.name, attribute.value)
+        );
+      }
+    });
+  }
+
   renderSpinner() {
     const loaderMarkup = `<div class="spinner">
                 <svg>
