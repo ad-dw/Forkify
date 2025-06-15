@@ -31,17 +31,21 @@ class RecipeView extends View {
               <use href="${icons}#icon-users"></use>
             </svg>
             <span class="recipe__info-data recipe__info-data--people">${
-              this._data?.servings
+              this._data.servings
             }</span>
             <span class="recipe__info-text">servings</span>
 
             <div class="recipe__info-buttons">
-              <button class="btn--tiny btn--increase-servings">
+              <button class="btn--tiny btn--increase-servings" data-update-to=${
+                this._data.servings - 1
+              }>
                 <svg>
                   <use href="${icons}#icon-minus-circle"></use>
                 </svg>
               </button>
-              <button class="btn--tiny btn--increase-servings">
+              <button class="btn--tiny btn--increase-servings" data-update-to=${
+                this._data.servings + 1
+              }>
                 <svg>
                   <use href="${icons}#icon-plus-circle"></use>
                 </svg>
@@ -124,6 +128,16 @@ class RecipeView extends View {
 
   addHandlerRenderer(handler) {
     ["load", "hashchange"].map((ev) => window.addEventListener(ev, handler));
+  }
+
+  addHandlerUpdateServings(handler) {
+    this._parentEl.addEventListener("click", function (ev) {
+      const btn = ev.target.closest(".btn--tiny");
+      if (!btn) return;
+      const updateTo = +btn.dataset.updateTo;
+      if (updateTo <= 0) return;
+      handler(updateTo);
+    });
   }
 }
 
