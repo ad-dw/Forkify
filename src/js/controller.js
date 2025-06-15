@@ -6,6 +6,7 @@ import ResultsView from "./views/resultsView.js";
 import PaginationView from "./views/paginationView.js";
 import { showToast } from "./helper.js";
 import * as model from "./model.js";
+import recipeView from "./views/recipeView.js";
 
 if (module.hot) {
   module.hot.accept();
@@ -48,9 +49,16 @@ const updateRecipeServings = function (newServing) {
   RecipeView.render(model.state.recipe);
 };
 
+const handleBookmark = function () {
+  if (!model.state.recipe.bookmarked) model.addBookmark(model.state.recipe);
+  else model.removeBookmark(model.state.recipe.id);
+  recipeView.update(model.state.recipe);
+};
+
 const init = () => {
   RecipeView.addHandlerRenderer(getRecipe);
   RecipeView.addHandlerUpdateServings(updateRecipeServings);
+  RecipeView.addHandlerBookmark(handleBookmark);
   SearchView.addHandlerSearch(getSearchResults);
   PaginationView.addHandlerPagination(getPagination);
 };
