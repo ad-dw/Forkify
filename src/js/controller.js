@@ -7,6 +7,7 @@ import PaginationView from "./views/paginationView.js";
 import { showToast } from "./helper.js";
 import * as model from "./model.js";
 import recipeView from "./views/recipeView.js";
+import Bookmarksview from "./views/bookmarksview.js";
 
 if (module.hot) {
   module.hot.accept();
@@ -18,6 +19,7 @@ const getRecipe = async function () {
     if (!id) return;
     RecipeView.renderSpinner();
     ResultsView.update(model.currentPageResults());
+    Bookmarksview.update(model.state.bookmarks);
     await model.loadRecipe(id);
     RecipeView.render(model.state.recipe);
   } catch (err) {
@@ -53,9 +55,15 @@ const handleBookmark = function () {
   if (!model.state.recipe.bookmarked) model.addBookmark(model.state.recipe);
   else model.removeBookmark(model.state.recipe.id);
   recipeView.update(model.state.recipe);
+  Bookmarksview.render(model.state.bookmarks);
+};
+
+const handleLoadBookmark = function () {
+  Bookmarksview.render(model.state.bookmarks);
 };
 
 const init = () => {
+  Bookmarksview.addHandlerLoader(handleLoadBookmark);
   RecipeView.addHandlerRenderer(getRecipe);
   RecipeView.addHandlerUpdateServings(updateRecipeServings);
   RecipeView.addHandlerBookmark(handleBookmark);

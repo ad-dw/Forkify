@@ -10,11 +10,12 @@ export default class View {
     this._parentEl.innerHTML = domMarkup;
   }
 
-  render(data) {
+  render(data, shouldRender = true) {
     if (!data || (Array.isArray(data) && !data.length))
       return this.renderError();
     this._data = data;
     const domMarkup = this._generateMarkup();
+    if (!shouldRender) return domMarkup;
     this._parentEl.innerHTML = domMarkup;
   }
 
