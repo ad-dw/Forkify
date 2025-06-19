@@ -8,6 +8,7 @@ import { showToast } from "./helper.js";
 import * as model from "./model.js";
 import recipeView from "./views/recipeView.js";
 import Bookmarksview from "./views/bookmarksview.js";
+import UploadRecipeView from "./views/uploadRecipeView.js";
 
 if (module.hot) {
   module.hot.accept();
@@ -62,6 +63,16 @@ const handleLoadBookmark = function () {
   Bookmarksview.render(model.state.bookmarks);
 };
 
+const handleUploadRecipe = async function (newRecipe) {
+  try {
+    await model.uploadRecipe(newRecipe);
+    UploadRecipeView.toggleModal();
+    RecipeView.render(model.state.recipe);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 const init = () => {
   Bookmarksview.addHandlerLoader(handleLoadBookmark);
   RecipeView.addHandlerRenderer(getRecipe);
@@ -69,5 +80,6 @@ const init = () => {
   RecipeView.addHandlerBookmark(handleBookmark);
   SearchView.addHandlerSearch(getSearchResults);
   PaginationView.addHandlerPagination(getPagination);
+  UploadRecipeView._addHandlerUploadRecipe(handleUploadRecipe);
 };
 init();

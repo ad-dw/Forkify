@@ -1,5 +1,5 @@
 import { API_URL, RES_PER_PAGE } from "./config";
-import { getJSON } from "./helper";
+import { getJSON, postJSON, showToast } from "./helper";
 
 export const state = {
   recipe: {},
@@ -15,6 +15,7 @@ export const loadRecipe = async (id) => {
   try {
     let data = await getJSON(`${API_URL}/${id}?`);
     state.recipe = data.recipe;
+    console.log(state.recipe);
     if (state.bookmarks.some((bmk) => bmk.id === state.recipe.id))
       state.recipe.bookmarked = true;
     else state.recipe.bookmarked = false;
@@ -66,6 +67,46 @@ export const removeBookmark = function (id) {
   const index = state.bookmarks.findIndex((el) => el.id === id);
   state.bookmarks.splice(index, 1);
   persistBookmarks();
+};
+
+export const uploadRecipe = async function (recipe) {
+  try {
+    const ingredients = Object.entries(recipe)
+      .filter((ele) => ele[0].includes("ingredient") && !!ele[1])
+      .map((ing) => {
+        const ingArr = ing[1].split(",");
+        if (!ingArr.length === 3) showToast("Wrong ingredient format");
+        const [quantity, unit, description] = ingArr;
+        return { quantity: quantity ? +quantity : null, unit, description };
+      });
+
+    if (ingredients.length !== 3) {
+      showToast("The ingredient format is not correct. Pkease try again !!!");
+      return;
+    }
+
+    const toUploadRecipe = {
+      title: recipe.title,
+      cooking_time: +recipe.cookingTime,
+      image_url: recipe.image,
+      servings: +recipe.servings,
+      publisher: recipe.publisher,
+      source_url: recipe.sourceUrl,
+      ingredients,
+    };
+
+    const data = await postJSON(`${API_URL}?`, toUploadRecipe);
+    if (data.status === "success") {
+      showToast("Recipe uploaded successfully", "success");
+    }
+    state.recipe = data.data.recipe;
+    addBookmark();
+  } catch (err) {
+    console.log(err);
+    showToast(
+      "OOps! some error occurred while uploading recipe. Please try again later."
+    );
+  }
 };
 
 const init = function () {
