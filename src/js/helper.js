@@ -10,39 +10,19 @@ const timeout = function (s) {
   });
 };
 
-export const getJSON = async (url) => {
+export const getJSON = async (url, payload = undefined, type = "get") => {
   try {
-    let response = await Promise.race([
-      fetch(`${url}key=${API_KEY}`),
-      timeout(TIMEOUT_SEC),
-    ]);
-    if (!response.ok)
-      throw new Error(
-        `${response.status} ${
-          response.statusText ||
-          "We could not fetch this recipe. try anothe one!"
-        }`
-      );
-    let { data } = await response.json();
-    return data;
-  } catch (err) {
-    throw err;
-  }
-};
-
-export const postJSON = async (url, payload) => {
-  console.log(payload, JSON.stringify(payload));
-  try {
-    let response = await Promise.race([
-      fetch(`${url}key=${API_KEY}`, {
+    let fetchPromise;
+    if (type === "get") fetchPromise = fetch(`${url}key=${API_KEY}`);
+    if (type === "post")
+      fetchPromise = fetch(`${url}key=${API_KEY}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
-      }),
-      timeout(TIMEOUT_SEC),
-    ]);
+      });
+    let response = await Promise.race([fetchPromise, timeout(TIMEOUT_SEC)]);
     if (!response.ok)
       throw new Error(
         `${response.status} ${
@@ -51,6 +31,7 @@ export const postJSON = async (url, payload) => {
         }`
       );
     let data = await response.json();
+    console.log(data);
     return data;
   } catch (err) {
     throw err;

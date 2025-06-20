@@ -1,5 +1,5 @@
 import { API_URL, RES_PER_PAGE } from "./config";
-import { getJSON, postJSON, showToast } from "./helper";
+import { getJSON, showToast } from "./helper";
 
 export const state = {
   recipe: {},
@@ -13,7 +13,7 @@ export const state = {
 
 export const loadRecipe = async (id) => {
   try {
-    let data = await getJSON(`${API_URL}/${id}?`);
+    let { data } = await getJSON(`${API_URL}/${id}?`);
     state.recipe = data.recipe;
     console.log(state.recipe);
     if (state.bookmarks.some((bmk) => bmk.id === state.recipe.id))
@@ -28,7 +28,7 @@ export const loadSearchResults = async (query) => {
   try {
     state.search.query = query;
     state.search.currentPage = 1;
-    let data = await getJSON(`${API_URL}?search=${query}&`);
+    const { data } = await getJSON(`${API_URL}?search=${query}&`);
     state.search.searchResults = data.recipes;
   } catch (err) {
     throw err;
@@ -74,7 +74,7 @@ export const uploadRecipe = async function (recipe) {
     const ingredients = Object.entries(recipe)
       .filter((ele) => ele[0].includes("ingredient") && !!ele[1])
       .map((ing) => {
-        const ingArr = ing[1].split(",");
+        const ingArr = ing[1].split(",").map((el) => el.trim());
         if (!ingArr.length === 3) showToast("Wrong ingredient format");
         const [quantity, unit, description] = ingArr;
         return { quantity: quantity ? +quantity : null, unit, description };
@@ -95,11 +95,12 @@ export const uploadRecipe = async function (recipe) {
       ingredients,
     };
 
-    const data = await postJSON(`${API_URL}?`, toUploadRecipe);
+    const data = await getJSON(`${API_URL}?`, toUploadRecipe, "post");
     if (data.status === "success") {
       showToast("Recipe uploaded successfully", "success");
     }
     state.recipe = data.data.recipe;
+    console.log("key", state.recipe);
     addBookmark();
   } catch (err) {
     console.log(err);
