@@ -68,6 +68,8 @@ const handleUploadRecipe = async function (newRecipe) {
     await model.uploadRecipe(newRecipe);
     UploadRecipeView.toggleModal();
     RecipeView.render(model.state.recipe);
+    Bookmarksview.render(model.state.bookmarks);
+    window.history.pushState(null, "", `#${model.state.recipe.id}`);
   } catch (err) {
     console.log(err);
   }
